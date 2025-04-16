@@ -14,14 +14,14 @@ var updateDurationEn = true;
 var waitingForResponse = false;
 var unsuccessfulTries = 0;
 var sysInfo;
-var cmdInfo;
+var cmdInfo = {};
 var autoIrrInfo;
 var client;
 var nextIrrDate;
 
 // URLs
 var sysInfoUrl = "php/get_info.php";
-var cmdUrl = "php/post_cmd.php";
+var cmdUrl = "php/insert_cmd.php";
 var autoIrrUrl = "php/get_auto_irr_info.php";
 
 // getAutoIrrInfo(autoIrrUrl);
@@ -30,6 +30,11 @@ var autoIrrUrl = "php/get_auto_irr_info.php";
 get_all_data();
 
 var t = setInterval(get_sys_info, 3000);
+
+//assign functions to buttons
+document.getElementById("valveButton").onclick = vlvBtnClick;
+document.getElementById("autoIrrButton").onclick = autoIrrBtnClick;
+document.getElementById("autoIrrSave").onclick = saveBtnClick;
 
 // welcome user
 
@@ -448,10 +453,10 @@ function insertIntoDB() {
 }
 
 function post() {
-  fetch(postCmdUrl, {
+  fetch(cmdUrl, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "cmdInfo=" + cmdInfoJson,
+    body: "cmd=" + cmdInfoJson,
   }).then((res) => {
     console.log("Request complete! response:", res);
   });
@@ -483,7 +488,11 @@ async function fetch_data(url, ssg_token) {
 async function get_sys_info() {
   sysInfo = await fetch_data("php/get_info.php", ssg_token);
   console.log(sysInfo);
-  updateUI();
+  if (!waitingForResponse) updateUI();
+  if (sysInfo.copy && waitingForResponse) {
+    waitingForResponse = false;
+    updateUI();
+  }
 }
 async function get_auto_irr_info() {
   autoIrrInfo = await fetch_data(autoIrrUrl, ssg_token);

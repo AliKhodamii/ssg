@@ -9,7 +9,7 @@ function httpReqAndCreateRecIrrTable() {
   Http.send();
 
   Http.onreadystatechange = (e) => {
-    console.log(Http.responseText);
+    // console.log(Http.responseText);
     tableData = JSON.parse(Http.responseText);
     // console.log(tableData);
     createTable();
