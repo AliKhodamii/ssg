@@ -456,7 +456,7 @@ function post() {
   fetch(cmdUrl, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "cmd=" + cmdInfoJson,
+    body: "cmd" + cmdInfoJson,
   }).then((res) => {
     console.log("Request complete! response:", res);
   });
