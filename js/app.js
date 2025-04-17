@@ -456,19 +456,19 @@ function post() {
   fetch(cmdUrl, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "cmd" + cmdInfoJson,
-  }).then((res) => {
-    console.log("Request complete! response:", res);
-  });
+    body: "cmd=" + cmdInfoJson,
+  })
+    .then((res) => res.text())
+    .then((d) => console.log("response : \n" + d));
 }
 function autoIrrPost() {
-  fetch(postCmdUrl, {
+  fetch("php/update_auto_irr.php", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "autoIrrInfo=" + autoIrrInfoJson,
-  }).then((res) => {
-    console.log("Request complete! response:", res);
-  });
+  })
+    .then((res) => res.text())
+    .then((d) => console.log("response: \n" + d));
 }
 async function fetch_data(url, ssg_token) {
   const formData = new FormData();
