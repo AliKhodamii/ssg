@@ -32,7 +32,9 @@ async function main() {
     document.getElementById("mainApp").style.display = "block";
   } else {
     const login = document.getElementById("login");
+    const register = document.getElementById("register");
     login.style.display = "block";
+    register.style.display = "block";
     // window.location.href = "./login.html";
   }
 }

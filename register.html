@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - SSG</title>
+    <link rel="stylesheet" href="css/register.css" />
+  </head>
+  <body>
+    <div class="register-container">
+      <h1>ایحاد حساب کاربری</h1>
+
+      <form id="registerForm" action="php/register.php" method="POST">
+        <div class="form-group">
+          <input
+            type="text"
+            name="username"
+            placeholder="نام کاربری"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <input
+            type="password"
+            name="password"
+            placeholder="گذرواژه"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <input
+            type="text"
+            name="ssg_token"
+            placeholder="SSG Token"
+            required
+          />
+        </div>
+        <button type="submit">ایجاد حساب</button>
+      </form>
+
+      <div id="message" class="message-hidden"></div>
+
+      <p class="login-link">
+        آیا حساب کاربری دارید؟ <a href="login.html">وارد شوید</a>
+      </p>
+    </div>
+
+    <script src="js/register.js"></script>
+  </body>
+</html>
