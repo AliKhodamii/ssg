@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 require 'db.php';
 
 if ($_POST) {
@@ -17,6 +19,7 @@ if ($_POST) {
     $data['valve'] = (bool)$valve['status'];
     $data['duration'] = $valve['duration'];
     $data['humidity'] = $humidity['humidity_value'];
+    $data['username'] = ucfirst(strtolower($_SESSION['username']));
 
     echo json_encode($data);
 }

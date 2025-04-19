@@ -7,19 +7,17 @@
     <link rel="stylesheet" href="css/sytle.css" />
   </head>
   <body>
-    <h1>SSG Page</h1>
-    <form id="login" action="login.html" style="display: none">
-      <p>Please Login!</p>
-      <button type="submit">Login</button>
-    </form>
-    <form
-      id="logout"
-      action="./php/logout.php"
-      method="POST"
-      style="display: none"
-    >
-      <button type="submit">Logout</button>
-    </form>
+    <div class="top-container">
+      <h1>سامانه آبیاری هوشمند SSG</h1>
+      <!-- <h2 style="border: none">Sed Smart Garden</h2> -->
+      <h3 id="username" style="border: none; text-align: start; margin: 0"></h3>
+      <form id="login" action="login.html" style="display: none">
+        <button type="submit" id="login-btn">ورود به حساب کاربری</button>
+      </form>
+      <form id="register" action="register.html" style="display: none">
+        <button type="submit" id="register-btn">ایجاد حساب کاربری</button>
+      </form>
+    </div>
 
     <div id="mainApp" class="mainContainer" style="display: none">
       <div class="square humidityDiv">
@@ -223,6 +221,22 @@
             <tbody id="recIrr"></tbody>
           </table>
         </div>
+      </div>
+      <div class="square top-container" style="padding: 0">
+        <form
+          id="logout"
+          action="./php/logout.php"
+          method="POST"
+          style="display: none; margin: 0 10px"
+        >
+          <button
+            type="submit"
+            id="logout-btn"
+            style="background-color: #e97132"
+          >
+            خروج
+          </button>
+        </form>
       </div>
     </div>
   </body>

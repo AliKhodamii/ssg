@@ -118,6 +118,10 @@ function updateUI() {
   // updateConStat();
 
   //update humidity
+
+  // show username
+  showUsername();
+
   updateHumidity();
 
   // update duration
@@ -130,6 +134,11 @@ function updateUI() {
 
   //update autoIrrEn
   if (updateAutoIrrSec) updateAutoIrr();
+}
+
+function showUsername() {
+  document.getElementById("username").textContent =
+    "خوش اومدی " + sysInfo.username;
 }
 
 function updateHumidity() {
