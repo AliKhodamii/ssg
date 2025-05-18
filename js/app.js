@@ -198,6 +198,9 @@ function valveIsOpen() {
   document.getElementById("irrTimeTd").classList.add("displayNone");
   document.getElementById("irrigating").classList.remove("displayNone");
   document.getElementById("durationTimeDiv").classList.add("displayNone");
+
+  // update div background color
+  document.getElementById("valveDiv").style.backgroundColor = "#d7fbe8";
 }
 
 function valveIsClose() {
@@ -512,3 +515,11 @@ async function get_all_data() {
   await get_auto_irr_info();
   await get_sys_info();
 }
+const numberInputs = document.querySelectorAll('input[type="number"]');
+numberInputs.forEach((input) => {
+  input.addEventListener("input", () => {
+    if (input.value.length > 2) {
+      input.value = input.value.slice(0, 2);
+    }
+  });
+});

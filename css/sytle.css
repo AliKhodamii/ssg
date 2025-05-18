@@ -16,6 +16,7 @@ body {
   /* padding: 20px; */
   box-sizing: border-box;
   font-family: Arial, sans-serif;
+  background-color: #ebf2fd;
 }
 
 .top-container {
@@ -92,7 +93,8 @@ img {
   height: 100%;
   margin: auto;
   width: 360px;
-  background-color: #155f82;
+  background-color: #2c313c;
+  border: 2px solid black;
   padding: 10px 10px 10px 10px;
   border-radius: 8px;
 }
@@ -103,7 +105,7 @@ img {
 }
 .square {
   height: fit-content;
-  background-color: #fffca8;
+  background-color: #f6fbff;
   margin-bottom: 10px;
   padding: 5px;
   border: 2.5px black solid;
@@ -306,4 +308,36 @@ th {
 }
 .recordTable tr:nth-child(even) {
   background-color: #fff;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+#valveButton.greenButton:hover {
+  background-color: #75e284;
+  color: black;
+}
+#valveButton.redButton:hover {
+  background-color: #742e09;
+  color: white;
+}
+
+#autoIrrButton.redButton:hover {
+  background-color: #742e09;
+  color: white;
+}
+#autoIrrButton.greenButton:hover {
+  background-color: #75e284;
+  color: white;
+}
+#autoIrrSave:hover {
+  background-color: #76c9e9;
+  color: black;
 }
