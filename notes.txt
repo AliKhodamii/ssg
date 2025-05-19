@@ -1,7 +1,5 @@
 ------------------ Post info ------------------
-
-data format that esp should send to post info:
-
+ESP:
 {
   "ssg_token": "abc",
   "valves": [
@@ -14,18 +12,19 @@ data format that esp should send to post info:
   ]
 }
 
-response:
+RESPONSE:
 {
   "status" : "data updated"
 }
 ______________________________________________________________________________
+
 ------------------ Get commands ------------------
-data format that esp should send to get commands:
+ESP:
 {
   "ssg_token" : "abc"
 }
 
-response:
+RESPONSE:
 {
   "commands": "no commands"
 }
@@ -41,7 +40,8 @@ or
 }
 
 ______________________________________________________________________________
------------------- acknowledge ------------------
+
+------------------ Command acknowledge ------------------
 EPS:
 {
     "ssg_token" : "abc",
