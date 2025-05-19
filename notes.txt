@@ -1,0 +1,56 @@
+------------------ Post info ------------------
+
+data format that esp should send to post info:
+
+{
+  "ssg_token": "abc",
+  "valves": [
+    {"id": 1,"name": "valve1","duration": 110,"status": 1},
+    {"id": 2,"name": "valve2", "status": 1}
+  ],
+  "humiditySensors": [
+    {"name": "sensor2","value": 50},
+    {"name": "sensor1","value": 20}
+  ]
+}
+
+response:
+{
+  "status" : "data updated"
+}
+______________________________________________________________________________
+------------------ Get commands ------------------
+data format that esp should send to get commands:
+{
+  "ssg_token" : "abc"
+}
+
+response:
+{
+  "commands": "no commands"
+}
+or
+{
+  "commands": [
+    {
+      "valve_name": "valve1",
+      "command": "open",
+      "duration": 12
+    }
+  ]
+}
+
+______________________________________________________________________________
+------------------ acknowledge ------------------
+EPS:
+{
+    "ssg_token" : "abc",
+    "executed" : [
+       { "valve_name" : "valve1" , "command" : "close" , "duration" : 5}
+        ]
+}
+
+RESPONSE:
+{
+  "status": "acknowledged"
+}
