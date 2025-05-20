@@ -40,7 +40,6 @@ or
 }
 
 ______________________________________________________________________________
-
 ------------------ Command acknowledge ------------------
 EPS:
 {
@@ -53,4 +52,85 @@ EPS:
 RESPONSE:
 {
   "status": "acknowledged"
+}
+______________________________________________________________________________
+------------------ Get status ------------------
+WEB:
+{
+  "ssg_token" : "abc"
+}
+
+RESPONSE:
+{
+  "device": {
+    "id": "1",
+    "ssg_token": "abc"
+  },
+  "valves": [
+    {
+      "id": "1",
+      "device_id": "1",
+      "name": "valve1",
+      "status": "1",
+      "duration": "110",
+      "auto_irr_en": "1",
+      "auto_irr_hour": "22",
+      "auto_irr_min": "0",
+      "auto_irr_often": "0",
+      "auto_irr_duration": "0",
+      "millis": "2"
+    },
+    {
+      "id": "2",
+      "device_id": "1",
+      "name": "valve2",
+      "status": "1",
+      "duration": "20",
+      "auto_irr_en": "0",
+      "auto_irr_hour": "0",
+      "auto_irr_min": "0",
+      "auto_irr_often": "0",
+      "auto_irr_duration": "0",
+      "millis": null
+    }
+  ],
+  "humidity_sensors": [
+    {
+      "id": "1",
+      "device_id": "1",
+      "name": "sensor1",
+      "value": "20"
+    },
+    {
+      "id": "2",
+      "device_id": "1",
+      "name": "sensor2",
+      "value": "50"
+    }
+  ]
+}
+______________________________________________________________________________
+------------------ Post commands ------------------
+WEB:
+{
+  "ssg_token": "abc",
+  "command_info": [
+    {
+      "valve_name": "valve1",
+      "command": "open",
+      "duration": 19
+    }
+  ]
+}
+
+RESPONSE:
+{
+  "success": true,
+  "message": "Command queued"
+}
+
+OR
+
+{
+  "error": "There is already a pending command"
 }
