@@ -46,7 +46,7 @@ try {
         if ($db_command) {
             // Mark command as done
             $stmt = $pdo->prepare("UPDATE valve_commands SET status = 'executed', executed_at = CURRENT_TIMESTAMP WHERE id = ?");
-            $stmt->execute([$command['id']]);
+            $stmt->execute([$db_command['id']]);
         }
 
         // Log irrigation only if command is turn_on (or similar)
