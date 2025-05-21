@@ -1,5 +1,7 @@
 <?php
 require_once '../db/helper.php'; // includes $pdo and getDeviceByToken
+require '../../lib/jdatetime.class.php';
+
 header('Content-Type: application/json');
 
 try {
@@ -39,25 +41,49 @@ try {
     $stmt->execute([":device_id" => $device_id]);
     $irrigation_records = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    print_r($irrigation_records);
 
     $response = [];
     $valves = [];
     foreach ($irrigation_records as $record) {
         $valves["valve" . $record['valve_id']][] = [
-            "date" => $record['started_at'],
-            "day_of_week" => "sun",
-            "time" => "00:18",
+            "date" => farsiDate($record['started_at']),
+            "day_of_week" => farsiDayOfWeek($record['started_at']),
+            "time" => farsiTime($record['started_at']),
             "duration" => $record['duration']
         ];
     }
-    print_r($valves);
+    // print_r($valves);
+    $response[] = $valves;
 
-
-    echo json_encode(['success' => true, 'message' => 'Config updated']);
+    echo json_encode(['success' => true, "records" => $response]);
 
     // echo json_encode(['success' => false, 'message' => 'Config update failed']);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['error' => 'Server error', 'details' => $e->getMessage()]);
+}
+
+
+
+function farsiDayOfWeek($date)
+{
+    $jdate = new jDateTime();
+    $timestamp = strtotime($date);
+    $day_of_week = $jdate->date("l", $timestamp);
+    return $day_of_week;
+}
+
+function farsiTime($date)
+{
+    $timestamp = strtotime($date);
+    $time = date("H:i", $timestamp);
+    return $time;
+}
+
+function farsiDate($date)
+{
+    $jdate = new jDateTime();
+    $timestamp = strtotime($date);
+    $farsiDate = $jdate->date("d/F", $timestamp);
+    return $farsiDate;
 }
