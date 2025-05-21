@@ -134,3 +134,104 @@ OR
 {
   "error": "There is already a pending command"
 }
+______________________________________________________________________________
+------------------ Auto irr config ------------------
+WEB:
+{
+  "ssg_token": "abc",
+  "valve_info": [
+    {
+      "valve_name": "valve1",
+      "auto_irr_en": 1,
+      "auto_irr_hour": 2,
+      "auto_irr_minute": 3,
+      "auto_irr_often": 10,
+      "auto_irr_duration": 21
+    }
+  ]
+}
+RESPONSE:{
+  {
+  "success": true,
+  "message": "Config updated"
+}
+}
+______________________________________________________________________________
+------------------ Irr rec ------------------
+WEB:
+{
+  "ssg_token": "abc"
+}
+
+RESPONSE:
+{
+  "success": true,
+  "records": [
+    {
+      "valve1": [
+        {
+          "date": "۳۰/اردیبهشت",
+          "day_of_week": "سه شنبه",
+          "time": "15:43",
+          "duration": "12"
+        },
+        {
+          "date": "۳۰/اردیبهشت",
+          "day_of_week": "سه شنبه",
+          "time": "10:01",
+          "duration": "17"
+        },
+        {
+          "date": "۳۰/اردیبهشت",
+          "day_of_week": "سه شنبه",
+          "time": "10:01",
+          "duration": "17"
+        },
+        {
+          "date": "۳۰/اردیبهشت",
+          "day_of_week": "سه شنبه",
+          "time": "09:59",
+          "duration": "17"
+        },
+        {
+          "date": "۲۹/اردیبهشت",
+          "day_of_week": "دوشنبه",
+          "time": "15:54",
+          "duration": "5"
+        }
+      ],
+      "valve2": [
+        {
+          "date": "۳۰/اردیبهشت",
+          "day_of_week": "سه شنبه",
+          "time": "15:43",
+          "duration": "23"
+        },
+        {
+          "date": "۳۰/اردیبهشت",
+          "day_of_week": "سه شنبه",
+          "time": "15:43",
+          "duration": "34"
+        },
+        {
+          "date": "۳۰/اردیبهشت",
+          "day_of_week": "سه شنبه",
+          "time": "15:43",
+          "duration": "45"
+        },
+        {
+          "date": "۳۰/اردیبهشت",
+          "day_of_week": "سه شنبه",
+          "time": "15:43",
+          "duration": "45"
+        },
+        {
+          "date": "۳۰/اردیبهشت",
+          "day_of_week": "سه شنبه",
+          "time": "15:43",
+          "duration": "54"
+        }
+      ]
+    }
+  ]
+}
