@@ -144,7 +144,7 @@ WEB:
       "valve_name": "valve1",
       "auto_irr_en": 1,
       "auto_irr_hour": 2,
-      "auto_irr_minute": 3,
+      "auto_irr_min": 3,
       "auto_irr_often": 10,
       "auto_irr_duration": 21
     }

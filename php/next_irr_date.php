@@ -9,32 +9,50 @@ header('Content-Type: application/json');
 try {
     // Validate session
     if (!isset($_SESSION['ssg_token'])) {
-        throw new Exception('Session token missing');
+        echo json_encode([
+            "message" => "Session token missing"
+        ]);
+        exit();
     }
 
     $ssg_token = $_SESSION['ssg_token'];
 
+    $stmt = $pdo->prepare(("SELECT * FROM devices WHERE ssg_token = :ssg_token"));
+    $stmt->execute(([':ssg_token' => $ssg_token]));
+    $device = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $device_id = $device["id"];
+
     // Get last irrigation record
-    $stmt = $pdo->prepare("SELECT * FROM irr_rec WHERE ssg_token = :ssg_token ORDER BY start_datetime DESC LIMIT 1");
-    $stmt->execute(['ssg_token' => $ssg_token]);
+    $stmt = $pdo->prepare("SELECT * FROM irrigation_record WHERE device_id = :device_id ORDER BY started_at DESC LIMIT 1");
+    $stmt->execute([':device_id' => $device_id]);
     $irr_rec = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$irr_rec) {
-        throw new Exception('No irrigation records found');
+        echo json_encode([
+            "message" => "No irrigation records found"
+        ]);
+        exit();
     }
 
     // Get auto irrigation info
-    $stmt = $pdo->prepare('SELECT * FROM auto_irr WHERE ssg_token = :ssg_token');
-    $stmt->execute(['ssg_token' => $ssg_token]);
+    $stmt = $pdo->prepare('SELECT * FROM valves WHERE device_id = :device_id');
+    $stmt->execute([':device_id' => $device_id]);
     $auto_irr_info = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$auto_irr_info) {
-        throw new Exception('Auto irrigation settings not found');
+        echo json_encode([
+            "message" => "Auto irrigation settings not found"
+        ]);
+        exit();
     }
 
-    $how_often = (int)$auto_irr_info['how_often'];
+    $how_often = (int)$auto_irr_info['auto_irr_often'];
     if ($how_often <= 0) {
-        throw new Exception('Invalid irrigation frequency');
+        echo json_encode([
+            "message" => "Invalid irrigation frequency"
+        ]);
+        exit();
     }
 
     $last_irr_date = new DateTime($irr_rec['start_datetime']);

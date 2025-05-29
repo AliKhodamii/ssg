@@ -9,6 +9,7 @@ if (!isset($_SESSION['ssg_token'])) {
     die(json_encode(['error' => 'Unauthorized - Session token missing']));
 }
 
+
 // Database configuration
 $hostname = 'localhost:3306';
 $username = 'jjqioyps_ssg';
@@ -18,6 +19,8 @@ $database = 'jjqioyps_ssg';
 require_once('jdatetime.class.php');
 
 try {
+    $ssg_token = $_SESSION['ssg_token'];
+
     // Create connection with error handling
     $conn = new mysqli($hostname, $username, $password, $database);
 
@@ -25,14 +28,21 @@ try {
         throw new Exception("Database connection failed: " . $conn->connect_error);
     }
 
+    $stmt = $conn->prepare("SELECT * FROM devices WHERE ssg_token = ?");
+    $stmt->bind_param("s", $ssg_token);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $device = $res->fetch_assoc();
+
+    $device_id = $device["id"];
     // Prepare statement with parameter binding
-    $stmt = $conn->prepare("SELECT * FROM `irr_rec` WHERE ssg_token = ? ORDER BY `start_datetime` DESC LIMIT 5");
+    $stmt = $conn->prepare("SELECT * FROM `irrigation_record` WHERE device_id = ? ORDER BY `started_at` DESC LIMIT 5");
     if (!$stmt) {
         throw new Exception("Prepare failed: " . $conn->error);
     }
 
     // Bind parameter securely
-    $stmt->bind_param("s", $_SESSION['ssg_token']);
+    $stmt->bind_param("i", $device_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -42,9 +52,9 @@ try {
         while ($row = $result->fetch_assoc()) {
             try {
                 $jdate = new jDateTime(false, true);
-                $row["date"] = $jdate->convertFormatToFormat('d / F', 'Y-m-d H:i:s', $row["start_datetime"]);
-                $row["farsiDay"] = $jdate->convertFormatToFormat('l', 'Y-m-d H:i:s', $row["start_datetime"]);
-                $row["time"] = $jdate->convertFormatToFormat('H:i', 'Y-m-d H:i:s', $row["start_datetime"]);
+                $row["date"] = $jdate->convertFormatToFormat('d / F', 'Y-m-d H:i:s', $row["started_at"]);
+                $row["farsiDay"] = $jdate->convertFormatToFormat('l', 'Y-m-d H:i:s', $row["started_at"]);
+                $row["time"] = $jdate->convertFormatToFormat('H:i', 'Y-m-d H:i:s', $row["started_at"]);
                 $row['irr_duration'] = $row['duration'];
                 $data[] = $row;
             } catch (Exception $e) {

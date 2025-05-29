@@ -13,16 +13,21 @@ var updateAutoIrrSec = true;
 var updateDurationEn = true;
 var waitingForResponse = false;
 var unsuccessfulTries = 0;
-var sysInfo;
+var sysInfo = {};
+var allInfo;
 var cmdInfo = {};
-var autoIrrInfo;
+var autoIrrInfo = {};
 var client;
 var nextIrrDate;
 
 // URLs
 var sysInfoUrl = "php/get_info.php";
-var cmdUrl = "php/insert_cmd.php";
+// var cmdUrl = "php/insert_cmd.php";
 var autoIrrUrl = "php/get_auto_irr_info.php";
+
+let statusUrl = "ssgBackend/api/web/status.php";
+let autoIrrConfigUrl = "ssgBackend/api/web/auto_irr_config.php";
+let cmdUrl = "ssgBackend/api/web/command.php";
 
 // getAutoIrrInfo(autoIrrUrl);
 // getCmdInfo(cmdUrl);
@@ -120,7 +125,7 @@ function updateUI() {
   //update humidity
 
   // show username
-  showUsername();
+  // showUsername();
 
   updateHumidity();
 
@@ -197,7 +202,7 @@ function valveIsOpen() {
   // update duration section
   document.getElementById("irrTimeTd").classList.add("displayNone");
   document.getElementById("irrigating").classList.remove("displayNone");
-  document.getElementById("durationTimeDiv").classList.add("displayNone");
+  document.getElementById("durationTimeDiv").style.display = "none";
 
   // update div background color
   document.getElementById("valveDiv").style.backgroundColor = "#d7fbe8";
@@ -219,8 +224,19 @@ function valveIsClose() {
   //update duration section
   document.getElementById("irrTimeTd").classList.remove("displayNone");
   document.getElementById("irrigating").classList.add("displayNone");
-  document.getElementById("durationTimeDiv").classList.remove("displayNone");
+  document.getElementById("durationTimeDiv").style.display = "grid";
 }
+
+const getNexIrrShamsi = async () => {
+  const res = await fetch("php/next_irr_date.php");
+  const data = await res.json();
+  nextIrrDate = data.next_irr_shamsi;
+
+  //update next irr section
+  document.getElementsByName("crossPic")[0].classList.add("displayNone");
+  document.getElementById("nextIrr").classList.remove("displayNone");
+  document.getElementById("nextIrr").textContent = nextIrrDate;
+};
 
 function updateAutoIrr() {
   updateAutoIrrSec = false;
@@ -237,22 +253,12 @@ function updateAutoIrr() {
     document.getElementById("autoIrrButton").classList.remove("greenButton");
     document.getElementById("autoIrrButton").classList.add("redButton");
 
+    // show auto irr info tbody
+    document.getElementById("autoIrrInfoTbody").style.display =
+      "table-row-group";
+
     //request next irr date
-    const Http = new XMLHttpRequest();
-    const url = "php/next_irr_date.php";
-    Http.open("GET", url);
-    Http.send();
-
-    Http.onreadystatechange = (e) => {
-      // console.log(Http.responseText);
-      var d = JSON.parse(Http.responseText);
-      nextIrrDate = d.next_irr_shamsi;
-
-      //update next irr section
-      document.getElementsByName("crossPic")[0].classList.add("displayNone");
-      document.getElementById("nextIrr").classList.remove("displayNone");
-      document.getElementById("nextIrr").textContent = nextIrrDate;
-    };
+    getNexIrrShamsi();
 
     document.getElementsByName("crossPic")[0].classList.add("displayNone");
     document.getElementById("nextIrr").classList.remove("displayNone");
@@ -304,6 +310,9 @@ function updateAutoIrr() {
     document.getElementById("autoIrrButton").classList.add("greenButton");
     document.getElementById("autoIrrButton").classList.remove("redButton");
 
+    // hidden auto irr info tbody
+    document.getElementById("autoIrrInfoTbody").style.display = "none";
+
     // update next irr section
     document.getElementsByName("crossPic")[0].classList.remove("displayNone");
     document.getElementById("nextIrr").classList.add("displayNone");
@@ -338,24 +347,51 @@ function vlvBtnClick() {
   if (sysInfo.valve) {
     console.log("Closing Valve");
 
+    const command_info = [];
+    command_info.push({
+      valve_name: "valve1",
+      command: "close",
+      duration: sysInfo.duration,
+    });
+    const data = {};
+    // { ssg_token: ssg_token }, command_info
+    data.ssg_token = ssg_token;
+    data.command_info = command_info;
+
+    const dataJson = JSON.stringify(data);
+    // console.log("cmd dataJson: ", dataJson);
+
     //prepare data to post
-    cmdInfo.valveCmd = "close";
-    cmdInfoJson = JSON.stringify(cmdInfo);
+    // cmdInfo.valveCmd = "close";
+    // cmdInfoJson = JSON.stringify(cmdInfo);
 
     //post new data to cmdInfo
-    post();
+    post(dataJson);
   } else {
     //prepare data to send
 
     var hour = document.getElementById("durationHour").value;
     var min = document.getElementById("durationMin").value;
     var irrDuration = Number(hour) * 60 + Number(min);
-    cmdInfo.durationCmd = irrDuration;
-    cmdInfo.valveCmd = "open";
-    cmdInfoJson = JSON.stringify(cmdInfo);
+
+    const command_info = [];
+    command_info.push({
+      valve_name: "valve1",
+      command: "open",
+      duration: irrDuration,
+    });
+    const cmdData = {};
+    cmdData.ssg_token = ssg_token;
+    cmdData.command_info = command_info;
+
+    const cmdDataJson = JSON.stringify(cmdData);
+
+    // cmdInfo.durationCmd = irrDuration;
+    // cmdInfo.valveCmd = "open";
+    // cmdInfoJson = JSON.stringify(cmdInfo);
 
     //post new data to cdmInfo
-    post();
+    post(cmdDataJson);
   }
 
   // update button css
@@ -376,8 +412,24 @@ function autoIrrBtnClick() {
     autoIrrInfo.autoIrrEn = false;
     autoIrrInfoJson = JSON.stringify(autoIrrInfo);
 
+    const valve_info = [];
+    valve_info.push({
+      valve_name: "valve1",
+      auto_irr_en: false,
+      auto_irr_hour: autoIrrInfo.hour,
+      auto_irr_min: autoIrrInfo.minute,
+      auto_irr_often: autoIrrInfo.howOften,
+      auto_irr_duration: autoIrrInfo.duration,
+    });
+
+    const data = {};
+    data.ssg_token = ssg_token;
+    data.valve_info = valve_info;
+
+    const dataJson = JSON.stringify(data);
+
     //post new data
-    autoIrrPost();
+    autoIrrPost(dataJson);
 
     updateUI();
   } else {
@@ -399,7 +451,23 @@ function autoIrrBtnClick() {
     autoIrrInfo.autoIrrEn = 1;
     autoIrrInfoJson = JSON.stringify(autoIrrInfo);
 
-    autoIrrPost();
+    const valve_info = [];
+    valve_info.push({
+      valve_name: "valve1",
+      auto_irr_en: true,
+      auto_irr_hour: autoIrrInfo.hour,
+      auto_irr_min: autoIrrInfo.minute,
+      auto_irr_often: autoIrrInfo.howOften,
+      auto_irr_duration: autoIrrInfo.duration,
+    });
+
+    const data = {};
+    data.ssg_token = ssg_token;
+    data.valve_info = valve_info;
+
+    const dataJson = JSON.stringify(data);
+
+    autoIrrPost(dataJson);
 
     updateUI();
   }
@@ -427,15 +495,24 @@ function saveBtnClick() {
   var AIhour = document.getElementById("hour").value;
   var irrDuration = Number(hour) * 60 + Number(min);
 
-  autoIrrInfo.autoIrrEn = autoIrrInfo.autoIrrEn;
-  autoIrrInfo.duration = irrDuration;
-  autoIrrInfo.minute = AImin;
-  autoIrrInfo.hour = AIhour;
-  autoIrrInfo.howOften = irrHowOften;
+  const data = {};
 
-  autoIrrInfoJson = JSON.stringify(autoIrrInfo);
+  data.auto_irr_en = Boolean(autoIrrInfo.autoIrrEn);
+  data.auto_irr_duration = Number(irrDuration);
+  data.auto_irr_min = Number(AImin);
+  data.auto_irr_hour = Number(AIhour);
+  data.auto_irr_often = Number(irrHowOften);
+  data.valve_name = "valve1";
+
+  const valve_info = [];
+  const autoIrrConfig = {};
+  valve_info.push(data);
+  autoIrrConfig.ssg_token = ssg_token;
+  autoIrrConfig.valve_info = valve_info;
+
+  const autoIrrConfigJson = JSON.stringify(autoIrrConfig);
   // post new data to autoIrrInfo
-  autoIrrPost();
+  autoIrrPost(autoIrrConfigJson);
   //update button
   // document.getElementById("autoIrrSave").classList.remove("greenButton");
   // document.getElementById("autoIrrSave").classList.remove("redButton");
@@ -443,7 +520,7 @@ function saveBtnClick() {
   // document.getElementById("autoIrrSave").textContent = "در حال ارسال...";
 
   updateAutoIrrSec = true;
-  updateAutoIrr();
+  // updateAutoIrr();
 }
 
 function insertIntoDB() {
@@ -464,23 +541,26 @@ function insertIntoDB() {
   });
 }
 
-function post() {
+function post(data) {
   fetch(cmdUrl, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "cmd=" + cmdInfoJson,
+    headers: { "Content-Type": "application/json" },
+    body: data,
   })
     .then((res) => res.text())
     .then((d) => console.log("response : \n" + d));
 }
-function autoIrrPost() {
-  fetch("php/update_auto_irr.php", {
+async function autoIrrPost(data) {
+  await fetch(autoIrrConfigUrl, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "autoIrrInfo=" + autoIrrInfoJson,
+    headers: { "Content-Type": "application/json" },
+    body: data,
   })
     .then((res) => res.text())
     .then((d) => console.log("response: \n" + d));
+  await get_sys_info();
+  updateAutoIrr();
+  updateUI();
 }
 async function fetch_data(url, ssg_token) {
   const formData = new FormData();
@@ -498,16 +578,44 @@ async function fetch_data(url, ssg_token) {
   }
 }
 async function get_sys_info() {
-  sysInfo = await fetch_data("php/get_info.php", ssg_token);
-  console.log(sysInfo);
+  try {
+    response = await fetch(statusUrl, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ ssg_token: ssg_token }),
+    });
+    allInfo = await response.json();
+  } catch (error) {
+    console.log("fetch failed." + error);
+  }
+
+  if (allInfo != null) {
+    // set sysInfo
+    sysInfo.humidity = Number(allInfo.humidity_sensors[0].value);
+    sysInfo.valve = allInfo.valves[0].status;
+    sysInfo.duration = Number(allInfo.valves[0].duration);
+
+    // Set auto irr info
+    autoIrrInfo.autoIrrEn = allInfo.valves[0].auto_irr_en;
+    autoIrrInfo.duration = allInfo.valves[0].auto_irr_duration;
+    autoIrrInfo.hour = allInfo.valves[0].auto_irr_hour;
+    autoIrrInfo.minute = allInfo.valves[0].auto_irr_min;
+    autoIrrInfo.howOften = allInfo.valves[0].auto_irr_often;
+  }
+  console.log("allInfo: ", allInfo);
+  console.log("sysInfo: ", sysInfo);
+  console.log("autoIrrInfo: ", autoIrrInfo);
   if (!waitingForResponse) updateUI();
   if (sysInfo.copy && waitingForResponse) {
     waitingForResponse = false;
+    sysInfo.copy = false;
     updateUI();
   }
 }
 async function get_auto_irr_info() {
-  autoIrrInfo = await fetch_data(autoIrrUrl, ssg_token);
+  // autoIrrInfo = await fetch_data(autoIrrUrl, ssg_token);
   console.log(autoIrrInfo);
 }
 
@@ -523,3 +631,26 @@ numberInputs.forEach((input) => {
     }
   });
 });
+
+const checkCmdStatus = () => {
+  if (waitingForResponse) {
+    fetch("php/getLastCmdStatus.php", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        ssg_token: ssg_token,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("status: ", data["status"]);
+        if (data["status"] == "executed") {
+          sysInfo.copy = true;
+        }
+      });
+  } else {
+    console.log("waitingForResponse is false");
+  }
+};
+
+const check = setInterval(checkCmdStatus, 3000);

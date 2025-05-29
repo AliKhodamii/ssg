@@ -152,10 +152,11 @@ Button {
 .autoIrrTable tr {
   height: 5vh;
 }
-.autoIrrTable tr:nth-child(n + 3):nth-child(-n + 6) {
+.autoIrrTable tbody:nth-of-type(2) tr {
   border-bottom: 1px #155f82 solid;
 }
-.autoIrrTable tr:first-child {
+
+.autoIrrTable tbody:nth-of-type(1) tr:first-child {
   text-align: center;
 }
 .autoIrrTable {
