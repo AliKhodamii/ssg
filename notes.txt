@@ -3,8 +3,8 @@ ESP:
 {
   "ssg_token": "abc",
   "valves": [
-    {"id": 1,"name": "valve1","duration": 110,"status": 1},
-    {"id": 2,"name": "valve2", "status": 1}
+    {"name": "valve1","duration": 110,"status": 1},
+    {"name": "valve2", "status": 1}
   ],
   "humiditySensors": [
     {"name": "sensor2","value": 50},

@@ -38,13 +38,19 @@ try {
 
         $valve_id = $valve['id'];
 
+        // Set valve status to true
+        $stmt = $pdo->prepare("UPDATE valves SET status = ? WHERE id = ?");
+        $stmt->execute([$command === 'open' ? 1 : 0, $valve_id]);
+
+
         // Find the matching command
         $stmt = $pdo->prepare("SELECT id FROM valve_commands WHERE valve_id = ? AND command = ? AND status = 'sent' ORDER BY created_at DESC LIMIT 1");
         $stmt->execute([$valve_id, $command]);
         $db_command = $stmt->fetch();
 
+        // Mark command as done
+
         if ($db_command) {
-            // Mark command as done
             $stmt = $pdo->prepare("UPDATE valve_commands SET status = 'executed', executed_at = CURRENT_TIMESTAMP WHERE id = ?");
             $stmt->execute([$db_command['id']]);
         }
