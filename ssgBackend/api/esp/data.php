@@ -19,6 +19,12 @@ if (!$device) {
 
 $device_id = $device['id'];
 
+// Update millis
+if (!empty($input['millis'])) {
+    $stmt =  $pdo->prepare("UPDATE devices SET millis = :millis WHERE id = :device_id");
+    $stmt->execute([":millis" => $input['millis'], ":device_id" => $device_id]);
+}
+
 //  Handle valves
 if (!empty($input['valves'])) {
     foreach ($input['valves'] as $valve) {
