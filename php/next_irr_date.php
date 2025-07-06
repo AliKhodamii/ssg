@@ -1,4 +1,6 @@
 <?php
+ini_set('session.gc_maxlifetime', 604800); // 7 days
+session_set_cookie_params(604800);         // 7 days for the cookie
 session_start();
 
 require 'jdatetime.class.php';
@@ -55,7 +57,7 @@ try {
         exit();
     }
 
-    $last_irr_date = new DateTime($irr_rec['start_datetime']);
+    $last_irr_date = new DateTime($irr_rec['started_at']);
     $next_irr_date = (clone $last_irr_date)->add(new DateInterval("P{$how_often}D"));
     $next_irr_miladi = $next_irr_date->format('Y-m-d');
 

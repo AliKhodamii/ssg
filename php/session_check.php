@@ -1,4 +1,6 @@
 <?php
+ini_set('session.gc_maxlifetime', 604800); // 7 days
+session_set_cookie_params(604800);         // 7 days for the cookie
 session_start();
 
 if (isset($_SESSION['username']) || $_SESSION['ssg_token']) {
